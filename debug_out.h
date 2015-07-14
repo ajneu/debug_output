@@ -7,15 +7,15 @@ Print debug info only when debugging. When NDEBUG (no debug) is defined, then pr
 
 
 // choose one of the following variants:
-#define VARIANT1
-//#define VARIANT2
+#define DEBUG_OUT_VARIANT1
+//#define DEBUG_OUT_VARIANT2
 
 
 /*
 
 There are 2 Variants:
 
-1) VARIANT1
+1) DEBUG_OUT_VARIANT1
 
 DOUT << "this is how is works" << std::endl; // output to cout, unless NDEBUG is defined
 DERR << "this is how is works" << std::endl; // output to cerr, unless NDEBUG is defined
@@ -24,7 +24,7 @@ DLOG << "this is how is works" << std::endl; // output to clog, unless NDEBUG is
 Limitations:
 (DOUT << "string") << "oops"; // this does not work!
 
-2) VARIANT2
+2) DEBUG_OUT_VARIANT2
 
 DOUT_v2( << "this is how is works" << std::endl); // output to cout, unless NDEBUG is defined
 DERR_v2( << "this is how is works" << std::endl); // output to cerr, unless NDEBUG is defined
@@ -35,7 +35,7 @@ This does not have the above limitation. The following works:
 (DOUT_v2( << "string")) << "oops"; // this works
 
 But therefore the output operator and operands have to be wrapped in brackets (), which looks rather ugly.
-So choose VARIANT1, because you really do not need VARIANT2 (or do you?)
+So choose DEBUG_OUT_VARIANT1, because you really do not need DEBUG_OUT_VARIANT2 (or do you?)
 
  */
 
@@ -43,7 +43,7 @@ So choose VARIANT1, because you really do not need VARIANT2 (or do you?)
 
 
 
-#ifdef VARIANT1 /* -------------------------------------------------- */
+#ifdef DEBUG_OUT_VARIANT1 /* -------------------------------------------------- */
 
 #ifndef NDEBUG  /* //////////////////////////// */
 // debugging: print debug output
@@ -68,7 +68,7 @@ constexpr bool debug_disabled{true};
 
 #endif  /* //////////////////////////////////// */
 
-#elif defined VARIANT2 /* ------------------------------------------- */
+#elif defined DEBUG_OUT_VARIANT2 /* ------------------------------------------- */
 
 #ifndef NDEBUG  /* //////////////////////////// */
 // debugging: print debug output
@@ -106,7 +106,7 @@ extern Nullstream nullout;
 
 #else /* ------------------------------------------------------------ */
 
-#error **** Warning:Neiter VARIANT1 nor VARIANT2 defined *****
+#error **** Warning:Neiter DEBUG_OUT_VARIANT1 nor DEBUG_OUT_VARIANT2 defined *****
 
 #endif /* ----------------------------------------------------------- */
 

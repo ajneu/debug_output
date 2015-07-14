@@ -1,6 +1,6 @@
 #include "debug_out.h"
 
-#ifdef VARIANT2
+#ifdef DEBUG_OUT_VARIANT2
 #ifdef NDEBUG
 Nullstream nullout;
 #endif
