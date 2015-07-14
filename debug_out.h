@@ -75,9 +75,9 @@ constexpr bool debug_disabled{true};
 
 #include <iostream>
 
-#define DOUT_v2(...) std::cout __VA_ARGS__
-#define DERR_v2(...) std::cerr __VA_ARGS__
-#define DLOG_v2(...) std::clog __VA_ARGS__
+#define DOUT_v2(...) (std::cout __VA_ARGS__)
+#define DERR_v2(...) (std::cerr __VA_ARGS__)
+#define DLOG_v2(...) (std::clog __VA_ARGS__)
 
 #else  /* ///////////////////////////////////// */
 // NOT debugging: so do NOT print debug output
@@ -86,9 +86,9 @@ constexpr bool debug_disabled{true};
 
 constexpr bool debug_disabled{true};
 
-#define DOUT_v2(...) ((debug_disabled) ? nullout : nullout __VA_ARGS__)
-#define DERR_v2(...) ((debug_disabled) ? nullout : nullout __VA_ARGS__)
-#define DLOG_v2(...) ((debug_disabled) ? nullout : nullout __VA_ARGS__)
+#define DOUT_v2(...) nullout
+#define DERR_v2(...) nullout
+#define DLOG_v2(...) nullout
 
 /* https://groups.google.com/d/msg/comp.lang.c++/HkEffd3Geb4/g8J6yTgSyQkJ
    possible alternatives from a nullstream:
