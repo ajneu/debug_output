@@ -42,6 +42,27 @@ So choose DEBUG_OUT_VARIANT1, because you really do not need DEBUG_OUT_VARIANT2 
 
 
 
+#ifdef NDEBUG /* ~~~~~~~~~~~~~~~~~~~ */
+// NOT debugging: so do NOT print debug output
+
+#include <ostream>
+
+/* https://groups.google.com/d/msg/comp.lang.c++/HkEffd3Geb4/g8J6yTgSyQkJ
+   possible alternatives for a nullstream:
+   http://stackoverflow.com/a/7818394  // but use:   static null_out_buf buf;
+ */
+struct Nullstream:
+  std::ostream {
+ Nullstream(): std::ios(0), std::ostream(0) {}
+};
+
+#endif /* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+
+
+
+
+
 
 #ifdef DEBUG_OUT_VARIANT1 /* -------------------------------------------------- */
 
@@ -58,13 +79,12 @@ So choose DEBUG_OUT_VARIANT1, because you really do not need DEBUG_OUT_VARIANT2 
 // NOT debugging: so do NOT print debug output
 
 // http://stackoverflow.com/a/11826787
-#include <iostream>
 
 constexpr bool debug_disabled{true};
 
-#define DOUT if (debug_disabled) {} else std::cerr
-#define DERR if (debug_disabled) {} else std::cerr
-#define DLOG if (debug_disabled) {} else std::cerr
+#define DOUT if (debug_disabled) {} else Nullstream()
+#define DERR if (debug_disabled) {} else Nullstream()
+#define DLOG if (debug_disabled) {} else Nullstream()
 
 #endif  /* //////////////////////////////////// */
 
@@ -82,23 +102,12 @@ constexpr bool debug_disabled{true};
 #else  /* ///////////////////////////////////// */
 // NOT debugging: so do NOT print debug output
 
-#include <iostream>
-
 constexpr bool debug_disabled{true};
 
 #define DOUT_v2(...) nullout
 #define DERR_v2(...) nullout
 #define DLOG_v2(...) nullout
 
-/* https://groups.google.com/d/msg/comp.lang.c++/HkEffd3Geb4/g8J6yTgSyQkJ
-   possible alternatives from a nullstream:
-   http://stackoverflow.com/a/7818394  // but use:   static null_out_buf buf;
-   
- */
-struct Nullstream:
-  std::ostream {
- Nullstream(): std::ios(0), std::ostream(0) {}
-};
 
 extern Nullstream nullout;
 
