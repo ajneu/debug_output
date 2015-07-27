@@ -297,7 +297,7 @@ a|
 (static_cast<void>                                         \
  (                                                           \
    [&](){ std::lock_guard<std::mutex> lock{debug_out_mutex}; \
-          std::cout << __VA_ARGS__;                          \
+          std::cout __VA_ARGS__;                             \
         }()                                                  \
  ), std::cout)
 
@@ -305,7 +305,7 @@ a|
 /// statement expressions (seem to be a GNU extension)
 #define DM_OUT(...)                                    \
 (({ std::lock_guard<std::mutex> lock{debug_out_mutex}; \
-    static_cast<void>(std::cout << __VA_ARGS__);       \
+    static_cast<void>(std::cout __VA_ARGS__);          \
    }), std::cout)
 */
 #endif /* NDEBUG */
