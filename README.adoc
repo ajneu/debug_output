@@ -4,7 +4,7 @@
 :toc:
 
 C++ debug output that's get's printed, unless `NDEBUG` is defined. +
-Includes mutex-protected versions, that can be used with multithreading.
+Includes mutex-protected versions, that can be used with multithreading; as well as optional filename and linenumber output.
 
 [[statement]]
 == Recommended: Function-like Macro as standalone statement
