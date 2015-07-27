@@ -34,7 +34,7 @@
 
 
 
-/* Are you sure you do NOT want to use mutex-protected versions (DM_OUT, DM_ERR or DM_LOG) ?
+/* Are you sure you do NOT want to use mutex-protected versions called DM_OUT, DM_ERR or DM_LOG ?
    Then uncomment the following:
 */
-//#define DEBUG_OUT_NO_DM_MUTEX
+//#define DEBUG_OUT_NO_DM
