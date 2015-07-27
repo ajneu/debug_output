@@ -9,6 +9,8 @@ Includes mutex-protected versions, that can be used with multithreading; as well
 [[statement]]
 == Recommended: Function-like Macro as standalone statement
 
+Enable with `#define DEBUG_OUTPUT_FUNCLIKE_STATEMENT` (see <<usage>>).
+
 * Basic usage:
 +
 [source,cpp]
@@ -196,6 +198,8 @@ a|
 [[chaining]]
 == Non-recommended: Function-like Macro as expression ("chaining behaviour")
 
+Enable with `#define DEBUG_OUTPUT_FUNCLIKE_CHAINING` (see <<usage>>).
+
 The difference with the <<statement,statement version>> above, is that here the chaining behaviour of `ostream` is possible.
 
 But this version is less efficient (in that it requires a specific global `nullout` -- <<nullstream,reference>>), so I do not recommend this version, but instead the <<statement,version already shown above>>.
@@ -338,6 +342,8 @@ with `nullout` as shown <<nullstream,above>>
 [[deprecated]]
 == Non-recommended: Macro (but not function-like)
 
+Enable with `#define DEBUG_OUTPUT_NON_FUNCLIKE` (see <<usage>>).
+
 If you really desperately want this +
 [source,cpp]
 ----
@@ -395,7 +401,7 @@ struct Nullstream: std::ostream {
 |===
 
 
-
+[[usage]]
 == Usage
 
 Set up global user settings by editing `debug_output_user.h`.
