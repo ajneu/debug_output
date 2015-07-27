@@ -152,7 +152,7 @@ a|
  }
 #endif
 ----
-[[mutex]]where `debug_output.h` has
+[[mutex]]where `debug_output_header.h` has
 [source,cpp]
 ----
 #ifndef NDEBUG
@@ -164,7 +164,7 @@ and `debug_output.cpp` has
 [source,cpp]
 ----
 #ifndef NDEBUG
-#include "debug_output.h"
+#include <mutex>
 std::mutex debug_out_mutex;
 #endif
 ----
@@ -250,7 +250,7 @@ a|
 #define DOUT(...) nullout
 #endif
 ----
-[[nullstream]]where `debug_output.h` has
+[[nullstream]]where `debug_output_header.h` has
 [source,cpp]
 ----
 #ifdef NDEBUG
@@ -270,7 +270,10 @@ and `debug_output.cpp` has
 [source,cpp]
 ----
 #ifdef NDEBUG
-#include "debug_output.h"
+/// https://groups.google.com/d/msg/comp.lang.c++/HkEffd3Geb4/g8J6yTgSyQkJ
+struct Nullstream: std::ostream {
+  Nullstream(): std::ios(0), std::ostream(0) {}
+};
 Nullstream nullout;
 #endif
 ----
@@ -338,7 +341,7 @@ with `nullout` as shown <<nullstream,above>>
 If you really desperately want this +
 [source,cpp]
 ----
-D_OUT << "hello" << " world" << std::endl;
+DOUT << "hello" << " world" << std::endl;
 ----
 i.e. no wrapping in brackets (and really don't need mutex-protection)... +
 then see this method (adapted from here http://stackoverflow.com/a/11826787 )
@@ -352,7 +355,7 @@ a|
 [source,cpp]
 ----
 #ifndef NDEBUG
-#define D_OUT std::cout
+#define DOUT (std::cout)
 #endif
 ----
 |===
@@ -369,7 +372,7 @@ a|
 [source,cpp]
 ----
 #ifdef NDEBUG
-#define D_OUT            \
+#define DOUT             \
   if (debug_disabled)    \
   { /* nothing */        \
   }                      \
@@ -377,7 +380,7 @@ a|
     Nullstream()    
 #endif
 ----
-With header `debug_output.h` having:
+With header `debug_output_header.h` having:
 [source,cpp]
 ----
 #ifdef NDEBUG
