@@ -27,7 +27,7 @@
 
 
 
-/* Use mutex protection everywhere ? Even in normal D_OUT, D_ERR or D_LOG ?
+/* Use mutex protection everywhere (within brackets)? Even in normal D_OUT, D_ERR or D_LOG ?
    Then uncomment the following
 */
 //#define DEBUG_OUT_MUTEX_EVERYWHERE
