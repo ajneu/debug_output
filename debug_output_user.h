@@ -38,3 +38,7 @@
    Then uncomment the following:
 */
 //#define DEBUG_OUT_NO_DM
+
+/* With filename and linenumbers? Then uncomment the following
+ */
+#define DEBUG_OUT_LINENO

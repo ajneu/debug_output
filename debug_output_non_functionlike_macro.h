@@ -14,6 +14,16 @@
 #undef DOUT
 #undef DOUT
 
+#undef priv_line
+
+#ifdef DEBUG_OUT_LINENO
+#define priv_str(x) priv_val(x)
+#define priv_val(x) #x
+#define priv_line << __FILE__ ":" priv_str(__LINE__) " "
+#else
+#define priv_line
+#endif
+
 
 #ifdef DEBUG_OUT_MUTEX_EVERYWHERE
 #error cannot use DEBUG_OUTPUT_NON_FUNCLIKE (with DOUT, ERR, DLOG) if DEBUG_OUT_MUTEX_EVERYWHERE is defined
@@ -25,9 +35,9 @@
 /* #include <iostream> // see debug_output_headers.h
                        // (which is included at top of cpp files)
 */
-#define DOUT (std::cout)
-#define DERR (std::cerr)
-#define DLOG (std::clog)
+#define DOUT (std::cout priv_line)
+#define DERR (std::cerr priv_line)
+#define DLOG (std::clog priv_line)
 
 
 #else  /* --------------------------------------------------------------------- */

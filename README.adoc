@@ -442,6 +442,10 @@ Here's a good example:
    Then uncomment the following:
 */
 #define DEBUG_OUT_NO_DM_MUTEX
+
+/* With filename and linenumbers? Then uncomment the following
+ */
+//#define DEBUG_OUT_LINENO
 ----
 
 Then just use this:
@@ -495,4 +499,8 @@ If you are in a multithreading environment, then just change the settings of `de
    Then uncomment the following:
 */
 #define DEBUG_OUT_NO_DM
+
+/* With filename and linenumbers? Then uncomment the following
+ */
+//#define DEBUG_OUT_LINENO
 ----

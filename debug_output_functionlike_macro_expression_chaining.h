@@ -15,6 +15,17 @@
 #undef DOUT
 
 
+#undef priv_line
+
+#ifdef DEBUG_OUT_LINENO
+#define priv_str(x) priv_val(x)
+#define priv_val(x) #x
+#define priv_line << __FILE__ ":" priv_str(__LINE__) " "
+#else
+#define priv_line
+#endif
+
+
 #ifndef NDEBUG  /* ------------------------------------------------------------ */
 // debugging: print debug output
 
@@ -23,7 +34,7 @@
   (static_cast<void>                                          \
    (                                                          \
     [&](){ std::lock_guard<std::mutex> lock{debug_out_mutex}; \
-           std::cout __VA_ARGS__;                             \
+           (std::cout priv_line) __VA_ARGS__;                 \
     }()                                                       \
    ), std::cout)
 
@@ -31,7 +42,7 @@
   (static_cast<void>                                          \
    (                                                          \
     [&](){ std::lock_guard<std::mutex> lock{debug_out_mutex}; \
-           std::cerr __VA_ARGS__;                             \
+           (std::cerr priv_line) __VA_ARGS__;                 \
     }()                                                       \
    ), std::cerr)
 
@@ -39,7 +50,7 @@
   (static_cast<void>                                          \
    (                                                          \
     [&](){ std::lock_guard<std::mutex> lock{debug_out_mutex}; \
-           std::clog  __VA_ARGS__;                            \
+           (std::clog priv_line) __VA_ARGS__;                 \
     }()                                                       \
    ), std::clog)
 
@@ -48,17 +59,17 @@
 
 #define priv_dm_out(...)                                      \
 (({ std::lock_guard<std::mutex> lock{debug_out_mutex};        \
-    static_cast<void>(std::cout __VA_ARGS__);                 \
+    static_cast<void>((std::cout priv_line) __VA_ARGS__);     \
    }), std::cout)
 
 #define priv_dm_err(...)                                      \
 (({ std::lock_guard<std::mutex> lock{debug_out_mutex};        \
-    static_cast<void>(std::cerr __VA_ARGS__);                 \
+    static_cast<void>((std::cerr priv_line) __VA_ARGS__);     \
    }), std::cerr)
 
 #define priv_dm_log(...)                                      \
 (({ std::lock_guard<std::mutex> lock{debug_out_mutex};        \
-    static_cast<void>(std::clog __VA_ARGS__);                 \
+    static_cast<void>((std::clog priv_line) __VA_ARGS__);     \
    }), std::clog)
 
 */
@@ -69,9 +80,9 @@
 /* #include <iostream> // see debug_output_headers.h
                        // (which is included at top of cpp files)
 */
-#define D_OUT(...) (std::cout __VA_ARGS__)
-#define D_ERR(...) (std::cerr __VA_ARGS__)
-#define D_LOG(...) (std::clog __VA_ARGS__)
+#define D_OUT(...) ((std::cout priv_line) __VA_ARGS__)
+#define D_ERR(...) ((std::cerr priv_line) __VA_ARGS__)
+#define D_LOG(...) ((std::clog priv_line) __VA_ARGS__)
 
 #else  /* ........................................... */
 
