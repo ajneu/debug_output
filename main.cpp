@@ -1,19 +1,35 @@
-#include "debug_out.h"
-#include <iomanip>
+#include "debug_output_headers.h"
 
 int main()
 {
   char arr[] = {'a', 's', 'd', 'f'}; // not null terminated!
 
-#ifdef DEBUG_OUT_VARIANT1
-  DOUT     << "hello"   << " there"  << std::endl;
-  DOUT.write(arr, sizeof(arr)) << std::endl;
-#elif defined DEBUG_OUT_VARIANT2
-  DOUT_v2( << "hello"   << " there"  << std::endl); // wrap in brackets!
+#define DEBUG_OUTPUT_VARIANT   DEBUG_OUTPUT_FUNCLIKE_STATEMENT
+#include "debug_output.h"
 
-  (DOUT_v2( << ("wow", "hello2") << " there2" << std::endl)) << "cool" << std::endl;
+  D_OUT(  << "D_OUT via function-like " << " macro" << " statement"  << std::endl);
+  D_OUT(  .write(arr, sizeof(arr))  << std::endl);
 
-  DOUT_v2(.write(arr, sizeof(arr)) << std::endl);
-#endif
+  DM_OUT( << "DM_OUT via function-like " << " macro" << " statement"  << std::endl);
+  DM_OUT( .write(arr, sizeof(arr))  << std::endl);
+  
+
+#undef  DEBUG_OUTPUT_VARIANT
+#define DEBUG_OUTPUT_VARIANT   DEBUG_OUTPUT_FUNCLIKE_CHAINING
+#include "debug_output.h"
+  
+  (D_OUT(  << "D_OUT via function-like " << " macro"))   << " expression chaining" << std::endl; 
+  D_OUT(  .write(arr, sizeof(arr))  << std::endl);
+
+  /* mutex only holds for the bracketed arguments of DM_OUT */
+  DM_OUT( << "DM_OUT via function-like " << " macro")     << " expression chaining"  << std::endl;
+  DM_OUT( .write(arr, sizeof(arr))  << std::endl);
+  (DM_OUT( << ("wow", "DM_OUT") << " is"))                << " cool"                  << std::endl; /* demo why __VA_ARGS__ is needed! */
+
+#undef  DEBUG_OUTPUT_VARIANT
+#define DEBUG_OUTPUT_VARIANT   DEBUG_OUTPUT_NON_FUNCLIKE
+#include "debug_output.h"
+
+  DOUT << "hi " << std::endl;  
   return 0;
 }

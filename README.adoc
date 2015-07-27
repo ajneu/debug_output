@@ -1,0 +1,392 @@
+= debug_output
+:source-highlighter: coderay
+:coderay-linenums-mode: inline
+:toc:
+
+C++ debug output that's get's printed, unless `NDEBUG` is defined. +
+Includes mutex-protected versions, that can be used with multithreading.
+
+[[statement]]
+== Recommended: Function-like Macro as standalone statement
+
+* Basic usage:
++
+[source,cpp]
+----
+D_OUT( << "hello" << " world" << std::endl); // "debug output"
+----
++
+You have to wrap the operators (`<<`) and their right-hand operands in brackets, since `D_OUT` is a function-like macro.
++
+The preprocessor then generates
++
+[cols="2,1"]
+|===
+a|
+[source,cpp]
+----
+std::cout << "hello " << "world" << std::endl;
+----
+a|if `NDEBUG` is not defined +
+  (i.e. debugging, so output debug-information)
+|===
++
+[cols="2,1"]
+|===
+a|
+[source,cpp]
+----
+/* nothing */
+----
+a|if `NDEBUG` is defined +
+  (i.e. not debugging, so no output)
+|===
++
+Why wrap the operators and operands in brackets?
++
+The reason: sooner or later you'll find you'll need a mutex-protected print-version, that works in a multi-threaded program and secures the global `std::cout` resource: +
+
+* Mutex-protected usage:
++
+[source,cpp]
+----
+DM_OUT( << "hello" << " world" << std::endl); // "debug mutex out"
+----
++
+The macro knows how many chained operators (`<<`) and operands, are included in the scope of the mutex-protection, by requiring them to be wrapped in brackets.
++
+This generates
++
+[cols="2,1"]
+|===
+a|
+[source,cpp]
+----
+ {                                                     \
+    std::lock_guard<std::mutex> lock{debug_out_mutex}; \
+    std::cout << "hello " << "world" << std::endl;     \
+ }
+----
+a|if `NDEBUG` is not defined +
+  (i.e. debugging, so output debug-information)
+|===
++
+[cols="2,1"]
+|===
+a|
+[source,cpp]
+----
+/* nothing */
+----
+a|if `NDEBUG` is defined +
+  (i.e. not debugging, so no output)
+|===
+
+
+=== Minor Limitations
+
+Chaining out beyond the macro...
+[source,cpp]
+----
+D_OUT( << "hello " << "world" << std::endl)   << "chaining does not work";
+//                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//                                          does not work (when NDEBUG defined)
+----
+does not work.
+
+In other words: this specific `D_OUT` can only be used as a standalone statement. +
+If you want chaining, then see below <<chaining>>.
+
+=== Implementation Details
+
+==== Non-Mutex Version
+
+[cols="1,2"]
+|===
+|
+*Macro when `NDEBUG` not defined* +
+(debugging, so print output)
+
+a|
+[source,cpp]
+----
+#ifndef NDEBUG
+#define D_OUT(...) (std::cout __VA_ARGS__)
+#endif
+----
+|===
+
+
+[cols="1,2"]
+|===
+|*Macro when `NDEBUG` defined* +
+(not debugging, so print nothing)
+
+a|
+[source,cpp]
+----
+#ifdef NDEBUG
+#define D_OUT(...) /* nothing */
+#endif
+----
+|===
+
+
+
+==== Mutex-protected Version
+
+[cols="1,2"]
+|===
+|
+*Macro when `NDEBUG` not defined* +
+(debugging, so print output)
+
+a|
+[source,cpp]
+----
+#ifndef NDEBUG
+#define DM_OUT(...)                                    \
+ {                                                     \
+    std::lock_guard<std::mutex> lock{debug_out_mutex}; \
+    std::cout __VA_ARGS__;                             \
+ }
+#endif
+----
+[[mutex]]where `debug_output.h` has
+[source,cpp]
+----
+#ifndef NDEBUG
+#include <mutex>
+extern std::mutex debug_out_mutex;
+#endif
+----
+and `debug_output.cpp` has
+[source,cpp]
+----
+#ifndef NDEBUG
+#include "debug_output.h"
+std::mutex debug_out_mutex;
+#endif
+----
+|===
+
+
+[cols="1,2"]
+|===
+|*Macro when `NDEBUG` defined* +
+(not debugging, so print nothing)
+
+a|
+[source,cpp]
+----
+#ifdef NDEBUG
+#define DM_OUT(...) /* nothing */
+#endif
+----
+|===
+
+
+
+
+
+
+
+
+
+[[chaining]]
+== Non-recommended: Function-like Macro as expression ("chaining behaviour")
+
+The difference with the <<statement,statement version>> above, is that here the chaining behaviour of `ostream` is possible.
+
+But this version is less efficient (in that it requires a specific global `nullout` -- <<nullstream,reference>>), so I do not recommend this version, but instead the <<statement,version already shown above>>.
+
+* Basic usage:
++
+[source,cpp]
+----
+D_OUT(  << "hello" << " world" << std::endl) << "chain-it!"; // "debug output"
+D_OUT() << "greetings" << std::endl;                         // "debug output"
+----
+
+* Mutex-protected usage:
++
+[source,cpp]
+----
+DM_OUT( << "mutex " << "protected" << std::endl)    << "not mutex " << "protected" << std::endl;
+//     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//            mutex protection                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//                                                             no mutex protection
+----
+
+=== Implementation Details
+
+==== Non-Mutex Version
+
+[cols="1,2"]
+|===
+|
+*Macro when `NDEBUG` not defined* +
+(debugging, so print output)
+
+a|
+[source,cpp]
+----
+#ifndef NDEBUG
+#define D_OUT(...) (std::cout __VA_ARGS__)
+#endif
+----
+|===
+
+
+[cols="1,2"]
+|===
+|*Macro when `NDEBUG` defined* +
+(not debugging, so print nothing)
+
+a|
+[source,cpp]
+----
+#ifdef NDEBUG
+#define DOUT(...) nullout
+#endif
+----
+[[nullstream]]where `debug_output.h` has
+[source,cpp]
+----
+#ifdef NDEBUG
+
+#include <ostream>
+
+/// https://groups.google.com/d/msg/comp.lang.c++/HkEffd3Geb4/g8J6yTgSyQkJ
+struct Nullstream: std::ostream {
+  Nullstream(): std::ios(0), std::ostream(0) {}
+};
+
+extern Nullstream nullout;
+
+#endif /* NDEBUG */
+----
+and `debug_output.cpp` has
+[source,cpp]
+----
+#ifdef NDEBUG
+#include "debug_output.h"
+Nullstream nullout;
+#endif
+----
+|===
+
+
+
+==== Mutex-protected Version
+
+[cols="1,2"]
+|===
+|
+*Macro when `NDEBUG` not defined* +
+(debugging, so print output)
+
+a|
+[source,cpp]
+----
+#ifndef NDEBUG
+#define DM_OUT(...)                                          \
+(static_cast<void>                                         \
+ (                                                           \
+   [&](){ std::lock_guard<std::mutex> lock{debug_out_mutex}; \
+          std::cout << __VA_ARGS__;                          \
+        }()                                                  \
+ ), std::cout)
+
+/*
+/// statement expressions (seem to be a GNU extension)
+#define DM_OUT(...)                                    \
+(({ std::lock_guard<std::mutex> lock{debug_out_mutex}; \
+    static_cast<void>(std::cout << __VA_ARGS__);       \
+   }), std::cout)
+*/
+#endif /* NDEBUG */
+----
+with `debug_out_mutex` as shown <<mutex,above>>.
+|===
+
+
+[cols="1,2"]
+|===
+|*Macro when `NDEBUG` defined* +
+(not debugging, so print nothing)
+
+a|
+[source,cpp]
+----
+#ifdef NDEBUG
+#define DM_OUT(...) nullout
+#endif
+----
+with `nullout` as shown <<nullstream,above>>
+|===
+
+
+
+
+
+
+
+[[deprecated]]
+== Non-recommended: Macro (but not function-like)
+
+If you really desperately want this +
+[source,cpp]
+----
+D_OUT << "hello" << " world" << std::endl;
+----
+i.e. no wrapping in brackets (and really don't need mutex-protection)... +
+then see this method (adapted from here http://stackoverflow.com/a/11826787 )
+
+[cols="1,2"]
+|===
+|*Macro when `NDEBUG` not defined* +
+(debugging, so print output)
+
+a|
+[source,cpp]
+----
+#ifndef NDEBUG
+#define D_OUT std::cout
+#endif
+----
+|===
+
+
+
+
+[cols="1,2"]
+|===
+|*Macro when `NDEBUG` defined* +
+(not debugging, so print nothing)
+
+a|
+[source,cpp]
+----
+#ifdef NDEBUG
+#define D_OUT            \
+  if (debug_disabled)    \
+  { /* nothing */        \
+  }                      \
+  else                   \
+    Nullstream()    
+#endif
+----
+With header `debug_output.h` having:
+[source,cpp]
+----
+#ifdef NDEBUG
+constexpr bool debug_disabled{true};
+
+struct Nullstream: std::ostream {
+  Nullstream(): std::ios(0), std::ostream(0) {}
+};
+#endif
+----
+
+|===
