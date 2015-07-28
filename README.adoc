@@ -404,7 +404,30 @@ struct Nullstream: std::ostream {
 [[usage]]
 == Usage
 
-Set up global user settings by editing `debug_output_user.h`.
+At the top of the source-file include
+[source,cpp]
+----
+#include "debug_output_headers.h" /* must be included at the top of files */
+----
+
+Then include
+[source,cpp]
+----
+#include "debug_output.h" /* can be included anywhere */
+----
+This header (`debug_output.h`) can be included anywhere (even within functions etc.);
+the reason being that the debug macro can be chosen on a per-case basis. For example:
+[source,cpp]
+----
+#undef  DEBUG_OUTPUT_VARIANT
+#define DEBUG_OUTPUT_VARIANT   DEBUG_OUTPUT_FUNCLIKE_STATEMENT
+#include "debug_output.h"
+D_OUT(  << "hello" << std::endl);
+----
+
+But usually that per-case stuff is totally unnecessary. So include both headers at the top.
+
+Also set up global user settings by editing `debug_output_user.h`.
 Here's a good example:
 [source,cpp]
 ----
@@ -437,21 +460,21 @@ Here's a good example:
 
 
 
-/* Use mutex protection everywhere (within brackets) ? Even in normal D_OUT, D_ERR or D_LOG ?
+/* Use mutex protection everywhere within brackets ? i.e. even in normal D_OUT(), D_ERR() or D_LOG() ?
    Then uncomment the following
 */
-//#define DEBUG_OUT_MUTEX_EVERYWHERE
+//#define DEBUG_OUT_MUTEX_EVERY_BRACKET
 
 
 
 /* Are you sure you do NOT want to use mutex-protected versions called DM_OUT, DM_ERR or DM_LOG ?
    Then uncomment the following:
 */
-#define DEBUG_OUT_NO_DM_MUTEX
+#define DEBUG_OUT_NO_DM
 
 /* With filename and linenumbers? Then uncomment the following
  */
-//#define DEBUG_OUT_LINENO
+#define DEBUG_OUT_LINENO
 ----
 
 Then just use this:
@@ -462,7 +485,10 @@ D_ERR( << "hello" << " world" << std::endl);
 D_LOG( << "hello" << " world" << std::endl);
 ----
 
-If you are in a multithreading environment, then just change the settings of `debug_output_user.h`, to have `DEBUG_OUT_MUTEX_EVERYWHERE` defined:
+If you are in a multithreading environment, and want the arguments in the brackets
+(above it is `<< "hello" << " world" << std::endl` ) to be mutex-protected,
+then just change the settings of `debug_output_user.h`, to have `DEBUG_OUT_MUTEX_EVERY_BRACKET` defined:
+
 [source,cpp]
 ----
 //////////////////
@@ -508,5 +534,5 @@ If you are in a multithreading environment, then just change the settings of `de
 
 /* With filename and linenumbers? Then uncomment the following
  */
-//#define DEBUG_OUT_LINENO
+#define DEBUG_OUT_LINENO
 ----

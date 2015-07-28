@@ -75,7 +75,7 @@
 */
 
 
-#ifndef DEBUG_OUT_MUTEX_EVERYWHERE /* ............... */
+#ifndef DEBUG_OUT_MUTEX_EVERY_BRACKET /* ............ */
 
 /* #include <iostream> // see debug_output_headers.h
                        // (which is included at top of cpp files)

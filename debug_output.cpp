@@ -1,6 +1,6 @@
 #include "debug_output_user.h"
 
-#if !defined (NDEBUG)   &&   (!defined (DEBUG_OUT_NO_DM) || defined (DEBUG_OUT_MUTEX_EVERYWHERE))
+#if !defined (NDEBUG)   &&   (!defined (DEBUG_OUT_NO_DM) || defined (DEBUG_OUT_MUTEX_EVERY_BRACKET))
 #include <mutex>
 std::mutex debug_out_mutex;
 #endif

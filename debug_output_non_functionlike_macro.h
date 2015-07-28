@@ -25,10 +25,6 @@
 #endif
 
 
-#ifdef DEBUG_OUT_MUTEX_EVERYWHERE
-#error cannot use DEBUG_OUTPUT_NON_FUNCLIKE (with DOUT, ERR, DLOG) if DEBUG_OUT_MUTEX_EVERYWHERE is defined
-#endif
-
 #ifndef NDEBUG  /* ------------------------------------------------------------ */
 // debugging: print debug output
 

@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-#if !defined (DEBUG_OUT_NO_DM) || defined (DEBUG_OUT_MUTEX_EVERYWHERE)
+#if !defined (DEBUG_OUT_NO_DM) || defined (DEBUG_OUT_MUTEX_EVERY_BRACKET)
 #include <mutex>
 extern std::mutex debug_out_mutex;
 #endif
