@@ -51,7 +51,7 @@
 
 #ifndef DEBUG_OUT_MUTEX_EVERY_BRACKET /* ............ */
 
-/* #include <iostream> // see debug_output_headers.h
+/* #include <iostream> // see debug_output.h
                        // (which is included at top of cpp files)
 */
 #define DOUT(...) ((std::cout priv_line) __VA_ARGS__)
@@ -60,7 +60,7 @@
 
 #else  /* ........................................... */
 
-/* #include <mutex> // see debug_output_headers.h
+/* #include <mutex> // see debug_output.h
                     // (which is included at top of cpp files)
 */
 #define DOUT(...) priv_dm_out(__VA_ARGS__)
@@ -73,7 +73,7 @@
 
 #ifndef DEBUG_OUT_NO_DM /* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-/* #include <mutex> // see debug_output_headers.h
+/* #include <mutex> // see debug_output.h
                     // (which is included at top of cpp files)
 */
 #define DMOUT(...) priv_dm_out(__VA_ARGS__)

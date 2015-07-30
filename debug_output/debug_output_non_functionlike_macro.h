@@ -28,7 +28,7 @@
 #ifndef NDEBUG  /* ------------------------------------------------------------ */
 // debugging: print debug output
 
-/* #include <iostream> // see debug_output_headers.h
+/* #include <iostream> // see debug_output.h
                        // (which is included at top of cpp files)
 */
 #define D_OUT (std::cout priv_line)
