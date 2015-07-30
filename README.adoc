@@ -8,10 +8,13 @@ Includes mutex-protected versions, that can be used with multithreading; as well
 
 == Three Variants
 
-. https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_functionlike_macro_statement.h[`debug_output_functionlike_macro_statement.h`]
-. https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_functionlike_macro_expression_chaining.h[`debug_output_functionlike_macro_expression_chaining.h`]
-. https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_non_functionlike_macro.h[`debug_output_non_functionlike_macro.h`]
-
+. https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_functionlike_macro_statement.h[`debug_output_functionlike_macro_statement.h`] +
+ see <<statement,below>>
+. https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_functionlike_macro_expression_chaining.h[`debug_output_functionlike_macro_expression_chaining.h`] +
+ see <<chaining,below>>
+. https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_non_functionlike_macro.h[`debug_output_non_functionlike_macro.h`] +
+ see <<nonfunclike,below>>
+ 
 The specific variant chosen is selected via
 https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_selector.h[`debug_output_selector.h`] +
 (which is automatically included from the main header https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output.h[`debug_output.h`])
@@ -70,7 +73,8 @@ Filename and Linenumbers:: If you want outputs with filename and linenumbers, th
 [[statement]]
 == Recommended: Function-like Macro as standalone statement
 
-Enable with `#define DEBUG_OUTPUT_FUNCLIKE_STATEMENT`
+Enable with `#define DEBUG_OUTPUT_FUNCLIKE_STATEMENT` +
+automatically includes https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_functionlike_macro_statement.h[`debug_output_functionlike_macro_statement.h`] +
 
 * Basic usage:
 +
@@ -259,7 +263,8 @@ a|
 [[chaining]]
 == Non-recommended: Function-like Macro as expression ("chaining behaviour")
 
-Enable with `#define DEBUG_OUTPUT_FUNCLIKE_CHAINING`
+Enable with `#define DEBUG_OUTPUT_FUNCLIKE_CHAINING` +
+automatically includes https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_functionlike_macro_expression_chaining.h[`debug_output_functionlike_macro_expression_chaining.h`]
 
 The difference with the <<statement,statement version>> above, is that here the chaining behaviour of `ostream` is possible.
 
@@ -399,10 +404,11 @@ with `nullout` as shown <<nullstream,above>>
 
 
 
-[[deprecated]]
+[[nonfunclike]]
 == Non-recommended: Macro (but not function-like)
 
-Enable with `#define DEBUG_OUTPUT_NON_FUNCLIKE`
+Enable with `#define DEBUG_OUTPUT_NON_FUNCLIKE` +
+automatically includes https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_non_functionlike_macro.h[`debug_output_non_functionlike_macro.h`]
 
 If you really desperately want this +
 [source,cpp]
