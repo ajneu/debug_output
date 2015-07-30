@@ -6,6 +6,22 @@
 C++ debug output that's get's printed, unless `NDEBUG` is defined. +
 Includes mutex-protected versions, that can be used with multithreading; as well as optional filename and linenumber output.
 
+== Three Variants
+
+. https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_functionlike_macro_statement.h[`debug_output_functionlike_macro_statement.h`]
+. https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_functionlike_macro_expression_chaining.h[`debug_output_functionlike_macro_expression_chaining.h`]
+. https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_non_functionlike_macro.h[`debug_output_non_functionlike_macro.h`]
+
+The specific variant chosen is selected via
+https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_selector.h[`debug_output_selector.h`] +
+(which is included in https://github.com/ajneu/debug_output/blob/master/debug_output/debug_output_headers.h[`debug_output_headers.h`])
+
+== Two Usage Choices
+
+. Single global variant config (example: https://github.com/ajneu/debug_output/tree/master/ex_single_global_conf[`ex_single_global_conf`]) -- recommended!
+. Per case variant selector (example: https://github.com/ajneu/debug_output/tree/master/ex_per_case_selector[`ex_per_case_selector`])
+
+
 [[statement]]
 == Recommended: Function-like Macro as standalone statement
 
@@ -52,7 +68,7 @@ The reason: sooner or later you'll find you'll need a mutex-protected print-vers
 +
 [source,cpp]
 ----
-DM_OUT( << "hello" << " world" << std::endl); // "debug mutex out"
+DMOUT( << "hello" << " world" << std::endl); // "debug mutex out"
 ----
 +
 The macro knows how many chained operators (`<<`) and operands, are included in the scope of the mutex-protection, by requiring them to be wrapped in brackets.
@@ -147,7 +163,7 @@ a|
 [source,cpp]
 ----
 #ifndef NDEBUG
-#define DM_OUT(...)                                    \
+#define DMOUT(...)                                    \
  {                                                     \
     std::lock_guard<std::mutex> lock{debug_out_mutex}; \
     std::cout __VA_ARGS__;                             \
@@ -182,7 +198,7 @@ a|
 [source,cpp]
 ----
 #ifdef NDEBUG
-#define DM_OUT(...) /* nothing */
+#define DMOUT(...) /* nothing */
 #endif
 ----
 |===
@@ -216,7 +232,7 @@ DOUT() << "greetings" << std::endl;                         // "debug output"
 +
 [source,cpp]
 ----
-DM_OUT( << "mutex " << "protected" << std::endl)    << "not mutex " << "protected" << std::endl;
+DMOUT( << "mutex " << "protected" << std::endl)    << "not mutex " << "protected" << std::endl;
 //     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //            mutex protection                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //                                                             no mutex protection
@@ -297,7 +313,7 @@ a|
 [source,cpp]
 ----
 #ifndef NDEBUG
-#define DM_OUT(...)                                          \
+#define DMOUT(...)                                          \
 (static_cast<void>                                         \
  (                                                           \
    [&](){ std::lock_guard<std::mutex> lock{debug_out_mutex}; \
@@ -307,7 +323,7 @@ a|
 
 /*
 /// statement expressions (seem to be a GNU extension)
-#define DM_OUT(...)                                    \
+#define DMOUT(...)                                    \
 (({ std::lock_guard<std::mutex> lock{debug_out_mutex}; \
     static_cast<void>(std::cout __VA_ARGS__);          \
    }), std::cout)
@@ -327,7 +343,7 @@ a|
 [source,cpp]
 ----
 #ifdef NDEBUG
-#define DM_OUT(...) nullout
+#define DMOUT(...) nullout
 #endif
 ----
 with `nullout` as shown <<nullstream,above>>
@@ -347,7 +363,7 @@ Enable with `#define DEBUG_OUTPUT_NON_FUNCLIKE` (see <<usage>>).
 If you really desperately want this +
 [source,cpp]
 ----
-D__OUT << "hello" << " world" << std::endl;
+D_OUT << "hello" << " world" << std::endl;
 ----
 i.e. no wrapping in brackets (and really don't need mutex-protection)... +
 then see this method (adapted from here http://stackoverflow.com/a/11826787 )
@@ -361,7 +377,7 @@ a|
 [source,cpp]
 ----
 #ifndef NDEBUG
-#define D__OUT (std::cout)
+#define D_OUT (std::cout)
 #endif
 ----
 |===
@@ -378,7 +394,7 @@ a|
 [source,cpp]
 ----
 #ifdef NDEBUG
-#define D__OUT             \
+#define D_OUT             \
   if (debug_disabled)    \
   { /* nothing */        \
   }                      \

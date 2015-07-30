@@ -1,4 +1,4 @@
-#include "debug_output_headers.h"
+#include "debug_output.h"
 
 int main()
 {
