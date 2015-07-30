@@ -15,10 +15,10 @@ Enable with `#define DEBUG_OUTPUT_FUNCLIKE_STATEMENT` (see <<usage>>).
 +
 [source,cpp]
 ----
-D_OUT( << "hello" << " world" << std::endl); // "debug output"
+DOUT( << "hello" << " world" << std::endl); // "debug output"
 ----
 +
-You have to wrap the operators (`<<`) and their right-hand operands in brackets, since `D_OUT` is a function-like macro.
+You have to wrap the operators (`<<`) and their right-hand operands in brackets, since `DOUT` is a function-like macro.
 +
 The preprocessor then generates
 +
@@ -90,13 +90,13 @@ a|if `NDEBUG` is defined +
 Chaining out beyond the macro...
 [source,cpp]
 ----
-D_OUT( << "hello " << "world" << std::endl)   << "chaining does not work";
+DOUT( << "hello " << "world" << std::endl)   << "chaining does not work";
 //                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //                                          does not work (when NDEBUG defined)
 ----
 does not work.
 
-In other words: this specific `D_OUT` can only be used as a standalone statement. +
+In other words: this specific `DOUT` can only be used as a standalone statement. +
 If you want chaining, then see below <<chaining>>.
 
 === Implementation Details
@@ -113,7 +113,7 @@ a|
 [source,cpp]
 ----
 #ifndef NDEBUG
-#define D_OUT(...) (std::cout __VA_ARGS__)
+#define DOUT(...) (std::cout __VA_ARGS__)
 #endif
 ----
 |===
@@ -128,7 +128,7 @@ a|
 [source,cpp]
 ----
 #ifdef NDEBUG
-#define D_OUT(...) /* nothing */
+#define DOUT(...) /* nothing */
 #endif
 ----
 |===
@@ -208,8 +208,8 @@ But this version is less efficient (in that it requires a specific global `nullo
 +
 [source,cpp]
 ----
-D_OUT(  << "hello" << " world" << std::endl) << "chain-it!"; // "debug output"
-D_OUT() << "greetings" << std::endl;                         // "debug output"
+DOUT(  << "hello" << " world" << std::endl) << "chain-it!"; // "debug output"
+DOUT() << "greetings" << std::endl;                         // "debug output"
 ----
 
 * Mutex-protected usage:
@@ -236,7 +236,7 @@ a|
 [source,cpp]
 ----
 #ifndef NDEBUG
-#define D_OUT(...) (std::cout __VA_ARGS__)
+#define DOUT(...) (std::cout __VA_ARGS__)
 #endif
 ----
 |===
@@ -251,7 +251,7 @@ a|
 [source,cpp]
 ----
 #ifdef NDEBUG
-#define DOUT(...) nullout
+#define D__OUT(...) nullout
 #endif
 ----
 [[nullstream]]where `debug_output_header.h` has
@@ -347,7 +347,7 @@ Enable with `#define DEBUG_OUTPUT_NON_FUNCLIKE` (see <<usage>>).
 If you really desperately want this +
 [source,cpp]
 ----
-DOUT << "hello" << " world" << std::endl;
+D__OUT << "hello" << " world" << std::endl;
 ----
 i.e. no wrapping in brackets (and really don't need mutex-protection)... +
 then see this method (adapted from here http://stackoverflow.com/a/11826787 )
@@ -361,7 +361,7 @@ a|
 [source,cpp]
 ----
 #ifndef NDEBUG
-#define DOUT (std::cout)
+#define D__OUT (std::cout)
 #endif
 ----
 |===
@@ -378,7 +378,7 @@ a|
 [source,cpp]
 ----
 #ifdef NDEBUG
-#define DOUT             \
+#define D__OUT             \
   if (debug_disabled)    \
   { /* nothing */        \
   }                      \
@@ -422,7 +422,7 @@ the reason being that the debug macro can be chosen on a per-case basis. For exa
 #undef  DEBUG_OUTPUT_VARIANT
 #define DEBUG_OUTPUT_VARIANT   DEBUG_OUTPUT_FUNCLIKE_STATEMENT
 #include "debug_output.h"
-D_OUT(  << "hello" << std::endl);
+DOUT(  << "hello" << std::endl);
 ----
 
 But usually that per-case stuff is totally unnecessary. So include both headers at the top.
@@ -435,11 +435,11 @@ Here's a good example:
 // User Settings
 //////////////////
 
-/* If you want to globally use a specific type of D_OUT (etc.) you can set that, 
+/* If you want to globally use a specific type of DOUT (etc.) you can set that, 
    by setting one of the following 3 variants to uncommented.
 
    Alternatively you can leave all versions commented, and decide on a per-case basis what kind of
-   D_OUT (etc.) you want. In that case do e.g. the following in cpp files
+   DOUT (etc.) you want. In that case do e.g. the following in cpp files
         #undef  DEBUG_OUTPUT_VARIANT
         #define DEBUG_OUTPUT_VARIANT   DEBUG_OUTPUT_FUNCLIKE_STATEMENT
         #include "debug_output.h"
@@ -460,14 +460,14 @@ Here's a good example:
 
 
 
-/* Use mutex protection everywhere within brackets ? i.e. even in normal D_OUT(), D_ERR() or D_LOG() ?
+/* Use mutex protection everywhere within brackets ? i.e. even in normal DOUT(), DERR() or DLOG() ?
    Then uncomment the following
 */
 //#define DEBUG_OUT_MUTEX_EVERY_BRACKET
 
 
 
-/* Are you sure you do NOT want to use mutex-protected versions called DM_OUT, DM_ERR or DM_LOG ?
+/* Are you sure you do NOT want to use mutex-protected versions called DMOUT, DMERR or DMLOG ?
    Then uncomment the following:
 */
 #define DEBUG_OUT_NO_DM
@@ -480,9 +480,9 @@ Here's a good example:
 Then just use this:
 [source,cpp]
 ----
-D_OUT( << "hello" << " world" << std::endl);
-D_ERR( << "hello" << " world" << std::endl);
-D_LOG( << "hello" << " world" << std::endl);
+DOUT( << "hello" << " world" << std::endl);
+DERR( << "hello" << " world" << std::endl);
+DLOG( << "hello" << " world" << std::endl);
 ----
 
 If you are in a multithreading environment, and want the arguments in the brackets
@@ -495,11 +495,11 @@ then just change the settings of `debug_output_user.h`, to have `DEBUG_OUT_MUTEX
 // User Settings
 //////////////////
 
-/* If you want to globally use a specific type of D_OUT (etc.) you can set that, 
+/* If you want to globally use a specific type of DOUT (etc.) you can set that, 
    by setting one of the following 3 variants to uncommented.
 
    Alternatively you can leave all versions commented, and decide on a per-case basis what kind of
-   D_OUT (etc.) you want. In that case do e.g. the following in cpp files
+   DOUT (etc.) you want. In that case do e.g. the following in cpp files
         #undef  DEBUG_OUTPUT_VARIANT
         #define DEBUG_OUTPUT_VARIANT   DEBUG_OUTPUT_FUNCLIKE_STATEMENT
         #include "debug_output.h"
@@ -520,14 +520,14 @@ then just change the settings of `debug_output_user.h`, to have `DEBUG_OUT_MUTEX
 
 
 
-/* Use mutex protection everywhere (within brackets)? Even in normal D_OUT, D_ERR or D_LOG ?
+/* Use mutex protection everywhere (within brackets)? Even in normal DOUT, DERR or DLOG ?
    Then uncomment the following
 */
 #define DEBUG_OUT_MUTEX_EVERYWHERE
 
 
 
-/* Are you sure you do NOT want to use mutex-protected versions called DM_OUT, DM_ERR or DM_LOG ?
+/* Are you sure you do NOT want to use mutex-protected versions called DMOUT, DMERR or DMLOG ?
    Then uncomment the following:
 */
 #define DEBUG_OUT_NO_DM

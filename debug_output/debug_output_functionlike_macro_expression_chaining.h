@@ -1,19 +1,18 @@
-#undef D_OUT
-#undef D_ERR
-#undef D_LOG
+#undef DOUT
+#undef DERR
+#undef DLOG
 
-#undef DM_OUT
-#undef DM_ERR
-#undef DM_LOG
+#undef DMOUT
+#undef DMERR
+#undef DMLOG
 
 #undef priv_dm_out
 #undef priv_dm_err
 #undef priv_dm_log
 
-#undef DOUT
-#undef DOUT
-#undef DOUT
-
+#undef D_OUT
+#undef D_ERR
+#undef D_LOG
 
 #undef priv_line
 
@@ -80,18 +79,18 @@
 /* #include <iostream> // see debug_output_headers.h
                        // (which is included at top of cpp files)
 */
-#define D_OUT(...) ((std::cout priv_line) __VA_ARGS__)
-#define D_ERR(...) ((std::cerr priv_line) __VA_ARGS__)
-#define D_LOG(...) ((std::clog priv_line) __VA_ARGS__)
+#define DOUT(...) ((std::cout priv_line) __VA_ARGS__)
+#define DERR(...) ((std::cerr priv_line) __VA_ARGS__)
+#define DLOG(...) ((std::clog priv_line) __VA_ARGS__)
 
 #else  /* ........................................... */
 
 /* #include <mutex> // see debug_output_headers.h
                     // (which is included at top of cpp files)
 */
-#define D_OUT(...) priv_dm_out(__VA_ARGS__)
-#define D_ERR(...) priv_dm_err(__VA_ARGS__)
-#define D_LOG(...) priv_dm_log(__VA_ARGS__)
+#define DOUT(...) priv_dm_out(__VA_ARGS__)
+#define DERR(...) priv_dm_err(__VA_ARGS__)
+#define DLOG(...) priv_dm_log(__VA_ARGS__)
 
 #endif   /* ......................................... */
 
@@ -102,9 +101,9 @@
 /* #include <mutex> // see debug_output_headers.h
                     // (which is included at top of cpp files)
 */
-#define DM_OUT(...) priv_dm_out(__VA_ARGS__)
-#define DM_ERR(...) priv_dm_err(__VA_ARGS__)
-#define DM_LOG(...) priv_dm_log(__VA_ARGS__)
+#define DMOUT(...) priv_dm_out(__VA_ARGS__)
+#define DMERR(...) priv_dm_err(__VA_ARGS__)
+#define DMLOG(...) priv_dm_log(__VA_ARGS__)
   
 #endif /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -113,16 +112,16 @@
 #else  /* --------------------------------------------------------------------- */
 // NOT debugging: so do NOT print debug output
 
-#define D_OUT(...) nullout
-#define D_ERR(...) nullout
-#define D_LOG(...) nullout
+#define DOUT(...) nullout
+#define DERR(...) nullout
+#define DLOG(...) nullout
 
   
 #ifndef DEBUG_OUT_NO_DM /* ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#define DM_OUT(...) nullout
-#define DM_ERR(...) nullout
-#define DM_LOG(...) nullout
+#define DMOUT(...) nullout
+#define DMERR(...) nullout
+#define DMLOG(...) nullout
 
 #endif  /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 

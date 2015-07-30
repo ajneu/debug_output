@@ -1,9 +1,7 @@
-#ifndef DEBUG_OUTPUT_HEADERS
-#define DEBUG_OUTPUT_HEADERS
+#ifndef DEBUG_OUTPUT_HEADERS_H
+#define DEBUG_OUTPUT_HEADERS_H
 
 #include "debug_output_user.h"
-
-
 
 
 #ifndef NDEBUG /* -------------------------------- */
